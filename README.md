@@ -1,4 +1,39 @@
-# Docker Swarm Lab
+# Docker Swarm Lab - NestJS API with PostgreSQL
+
+This project demonstrates the deployment of a NestJS API with its PostgreSQL database on a Docker Swarm cluster, using Docker-in-Docker on a local host machine.
+
+## Objective
+
+The main goal of this project is to show how to:
+
+- Set up a local Docker Swarm cluster
+- Use Docker-in-Docker (DinD) to simulate a multi-node environment
+- Deploy a modern NestJS application with data persistence
+- Configure networks, volumes, and secrets in a Swarm environment
+- Manage high availability and application resilience
+
+## Architecture
+
+The project consists of:
+
+- A backend API developed with NestJS
+- A PostgreSQL database for data persistence
+- A local Docker Swarm cluster using Docker-in-Docker
+
+## Prerequisites
+
+- Docker installed on your host machine
+- Docker Compose
+- Git
+
+## How to Use
+
+1. Clone the repository
+2. Run the Swarm cluster initialization script
+3. Deploy the stack with the API and database
+4. Test the API via the exposed endpoints
+
+
 
 ## 1. Create the Swarm
 ```sh
