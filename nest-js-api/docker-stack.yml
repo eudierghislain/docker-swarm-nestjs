@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  api:
+    image: registry:5000/nestjs-api
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: host
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_NAME=nestjs
+      - NODE_ENV=production
+    deploy:
+      mode: replicated
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+      - swarm-network
+
+  # PostgreSQL en dehors du système de réplication de Swarm
+  # car c'est un service avec état (stateful)
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=nestjs
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager # Assurez-vous que PostgreSQL tourne sur le nœud manager
+    networks:
+      - swarm-network
+
+networks:
+  swarm-network:
+    name: swarm-network
+    driver: overlay
+    attachable: true
+
+volumes:
+  postgres_data:
+    driver: local

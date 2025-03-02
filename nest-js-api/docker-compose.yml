@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  api:
+    image: nestjs-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nestjs-api-container  # Nom du conteneur API
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_NAME=nestjs
+      - NODE_ENV=development
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - nestjs-network  # Référence au réseau personnalisé
+    
+  postgres:
+    container_name: postgres-db-container  # Nom du conteneur PostgreSQL
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=nestjs
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - nestjs-network  # Référence au réseau personnalisé
+
+networks:
+  nestjs-network:  # Définition du réseau personnalisé
+    driver: bridge
+    name: nestjs-network-name  # Nom du réseau
+
+volumes:
+  postgres_data:
